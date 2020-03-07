@@ -111,6 +111,6 @@ Data Base Updated
 /tmp/tmp.TqrQoFdLE7: OK
 ```
 Exit code 0 means that certificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
-
+# Generate .p12 
 
 
