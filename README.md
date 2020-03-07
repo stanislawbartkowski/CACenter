@@ -76,9 +76,41 @@ The CA has the following directory structure under *DIRCA* root directory:<br>
     * ca-chain.cert.pem CA certficate chain, root and intermediate
   * openssl.cnf configuration file for intermediate CA
   * index.txt index of all certificates created.
+  
+The created certificates are stored in the *$DIRCA/intermediate/private* directory. <br>
+After a new certficate is created, the *$DIRCA/intermediate/index.txt* is appended. The sequential *ID* is the subdirectory in the *$DIRCA/intermdiate/private* directory and all three file: csr, key and crt are stored there.<br>
+
+Example:
+Line in *index.txt* file:
+```
+V	210317182702Z		1000	unknown	/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com
+```
+> ls ..../ca/intermediate/private/1000/ -ltr
+```
+www.example.com.key.pem
+www.example.com.csr.pem
+www.example.com.cert.pem
+```
 
 # Issue a certificate signed by this CA
-> 
+> ./ca.sh makecert certname certsub
+* certname, the file name of the certficate created
+* certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same CN of root and intermediate CA certficates.
+
+Example:<br>
+> ./ca.sh makecert www.example.com /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
+```
+          X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+Certificate is to be certified until Mar 17 18:27:02 2021 GMT (375 days)
+
+Write out database with 1 new entries
+Data Base Updated
+/tmp/tmp.TqrQoFdLE7: OK
+```
+Exit code 0 means that cerrtificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
 
 
 
