@@ -1,13 +1,13 @@
 # CACenter
 
-A simple Certificate Authority center issuing server and client SSL certificates. It is and automated version of the procedure described in this webpage.
+A simple Certificate Authority centre issuing server and client SSL certificates. It is an automated version of the procedure described in this webpage.
 
 https://jamielinux.com/docs/openssl-certificate-authority/index.html.
 
 The following tasks are implemented:
 * Create root and intermediate Certificate Authority.
 * Issue a pair key/cert certificate signed by the intemediate Certificate Authority
-* Produce on demand .pk12 cert file containing key and certificate.
+* Produce on-demand .pk12 cert file containing key and certificate.
 
 # Files description
  * ca.sh Bash script file implementation using OpenSSL tools.
@@ -33,17 +33,17 @@ Modify env.rc source file.
 | ROOTKEYPASSWORD | Password for root key/cert credentials| secret
 | ROOTSUB | Root authority subject | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=thinkde.sb.com"
 | INTERMEDIATEKEYPASSWD | Password for intermediate key/cert credentials | secret
-| INTERMEDIATESUB | Intermediate autority subject (CN for root and intemediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
-| UNIQ | Possible values : yes/no | No: duplictated CN certificates are allowed
+| INTERMEDIATESUB | Intermediate authority subject (CN for root and intemediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
+| UNIQ | Possible values: yes/no | No: duplictated CN certificates are allowed
 
 **UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this contraint.<br>
-All tasks are implemented in *ca.sh* bash script file. Exit code 0 means that operation was completed successfully. Non-zero code means failure.
+All tasks are implemented in *ca.sh* bash script file. Exit code 0 means that the operation was completed successfully. Non-zero code means failure.
 
-# Create new CA center
+# Create a new CA centre
 
 > ./ca.sh create safe/force<br>
 
-Creates new CA using configuration parameters in *env.rc*. Previous content of *DIRCA* is removed. Parameter *safe* asks for yes/no permission before creating new CA, parameter *force* creates new CA and remove the old on without asking.<br>
+Creates new CA using configuration parameters in *env.rc*. The previous content of *DIRCA* is removed. Parameter *safe* asks for yes/no permission before creating new CA, parameter *force* creates new CA and remove the old one without asking.<br>
 Script exit code 0 means success, any other exit code means failure.
 
 Example:<br>
@@ -79,7 +79,7 @@ The CA has the following directory structure under *DIRCA* root directory:<br>
   * index.txt index of all certificates created.
   
 The created certificates are stored in the *$DIRCA/intermediate/private* directory. <br>
-After a new certficate is created, the *$DIRCA/intermediate/index.txt* is appended. The sequential *ID* is the subdirectory in the *$DIRCA/intermdiate/private* directory and all three file: csr, key and crt are stored there.<br>
+After a new certificate is created, the *$DIRCA/intermediate/index.txt* is appended. The sequential *ID* is the subdirectory in the *$DIRCA/intermdiate/private* directory and all three file: csr, key and crt are stored there.<br>
 
 Example:
 Line in *index.txt* file:
@@ -95,8 +95,8 @@ www.example.com.cert.pem
 
 # Issue a certificate signed by this CA
 > ./ca.sh makecert certname certsub
-* certname, the file name of the certficate created
-* certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same CN of root and intermediate CA certficates.
+* certname, the file name of the certificate created
+* certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same CN of root and intermediate CA certificate.
 
 Example:<br>
 > ./ca.sh makecert www.example.com /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
@@ -125,7 +125,6 @@ Example:<br>
 ```
  ls /tmp/www.example.com.p12 
 /tmp/www.example.com.p12
-```
 ```
 
 
