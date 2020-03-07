@@ -172,7 +172,7 @@ movecertificate() {
     local -r TKEY=$2
     local -r TCSR=$3
     local -r TCERT=$4
-    local -r LASTNUM=`tail -n 1 /home/sbartkowski/ca/intermediate/index.txt | cut -f 4`
+    local -r LASTNUM=`tail -n 1 $INDEXDB | cut -f 4`
 
     local -r  CERTDIR=$DIR/private/$LASTNUM
     mkdir -p  $CERTDIR
