@@ -36,8 +36,26 @@ Modify env.rc source file.
 | INTERMEDIATESUB | Intermediate autority subject (CN for root and intemediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
 | UNIQ | Possible values : yes/no | No: duplictated CN certificates are allowed
 
-**UNIQ** variable is used to set 
+**UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this contraint.
 
+# Create new CA center
+
+> ./ca.sh create safe/force<br>
+Creates new CA using configuration parameters in *env.rc*. Previous content of *DIRCA* is removed. Parameter *safe* asks for yes/no permission before creating new CA, parameter *force* creates new CA and remove the old on without asking.
+
+Example:<br>
+>./ca.sh create safe
+```
+Creates certification center
+Uniqe certificates no
+ Directory for certificates: /home/sb/ca
+   Warning: previous content of /home/sb/ca will be removed !
+ Root subject: /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=thinkde.sb.com
+ Root password: XXXXXX
+ Intermediate subject: /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com
+ Intermediate password: XXXXXXX
+Create new CA center (Yy) ?
+```
 
 
 
