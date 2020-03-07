@@ -36,7 +36,8 @@ Modify env.rc source file.
 | INTERMEDIATESUB | Intermediate autority subject (CN for root and intemediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
 | UNIQ | Possible values : yes/no | No: duplictated CN certificates are allowed
 
-**UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this contraint.
+**UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this contraint.<br>
+All tasks are implemented in *ca.sh* bash script file. Exit code 0 means that operation was completed successfully. Non-zero code means failure.
 
 # Create new CA center
 
