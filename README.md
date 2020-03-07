@@ -15,7 +15,7 @@ The following tasks are implemented:
  * intermediateopenssl.cnf Template for intermediate openssl.conf file
  * template/env.rc Template configuration file
  
- openssl.conf and intermediateopenssl.conf containt XX-XX, during the creation of CA it is replaced by CA directory.
+ openssl.conf and intermediateopenssl.conf contain XX-XX string, during the creation of CA it is replaced by CA directory.
  
  # Installation and configuration
  
