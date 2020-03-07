@@ -73,7 +73,9 @@ The CA has the following directory structure under *DIRCA* root directory:<br>
   * csr: intermediate.csr.pem intermediate csr file
   * certs: 
     * intermediate.cert.pem intermediate certificate
-    * ca-chain.cert.pem
+    * ca-chain.cert.pem CA certficate chain, root and intermediate
+  * openssl.cnf configuration file for intermediate CA
+  * index.txt database containing all index of all certificates created.
 
 
 
