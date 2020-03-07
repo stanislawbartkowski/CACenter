@@ -41,7 +41,9 @@ Modify env.rc source file.
 # Create new CA center
 
 > ./ca.sh create safe/force<br>
-Creates new CA using configuration parameters in *env.rc*. Previous content of *DIRCA* is removed. Parameter *safe* asks for yes/no permission before creating new CA, parameter *force* creates new CA and remove the old on without asking.
+
+Creates new CA using configuration parameters in *env.rc*. Previous content of *DIRCA* is removed. Parameter *safe* asks for yes/no permission before creating new CA, parameter *force* creates new CA and remove the old on without asking.<br>
+Script exit code 0 means success, any other exit code means failure.
 
 Example:<br>
 >./ca.sh create safe
@@ -57,6 +59,21 @@ Uniqe certificates no
 Create new CA center (Yy) ?
 ```
 
+The CA has the following directory structure under *DIRCA* root directory:<br>
+* csr: (empty)
+* crl: (empty)
+* private (600): ca,key.pem, root certficate key
+* certs: ca.cert.pem, root certficate
+* newcerts : 1000.pem
+* openssl.cnf Configuation file for root
+* intermediate: intermediate authority directory
+  * newcerts: (empty)
+  * crl: (emmpty)
+  * private (600): intermediate.key.pem. This directory also keeps all certificates generated.
+  * csr: intermediate.csr.pem intermediate csr file
+  * certs: 
+    * intermediate.cert.pem intermediate certificate
+    * ca-chain.cert.pem
 
 
 
