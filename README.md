@@ -112,5 +112,19 @@ Data Base Updated
 ```
 Exit code 0 means that certificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
 # Generate .p12 
+Create openssl pkcs12 file containing private key and certficate. The certficates should be alredy create by *./ca.sh makecert* command.
+> ././ca.sh makep12 /filename/ /number/ /password/<br>
+* filename : filename of the certficate in the *$DIRCA/intermediate/private/number* directory
+* number : the subdirectory in *private* directory
+* password : encryption password for pkcs12 file generated.
+
+The pkcs12 file is generated in /tmp directory as *filename.p12* file.<br>
+Example:<br>
+>  ./ca.sh makep12 www.example.com 1000 secret
+```
+ ls /tmp/www.example.com.p12 
+/tmp/www.example.com.p12
+```
+```
 
 
