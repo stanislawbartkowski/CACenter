@@ -127,6 +127,7 @@ Example:<br>
 ```
 # Issue a certificate using CSR file 
 >./ca.sh csrcert /CSR file/<br>
+
 Produces a certficate signed by the CA using CSR file. 
 
  ./ca.sh csrcert ./bigsql.csr 
