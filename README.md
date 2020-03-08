@@ -94,12 +94,11 @@ www.example.com.cert.pem
 ```
 
 # Issue a certificate signed by this CA
-> ./ca.sh makecert certname certsub
-* certname, the file name of the certificate created
+> ./ca.sh makecert certsub
 * certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same CN of root and intermediate CA certificate.
 
 Example:<br>
-> ./ca.sh makecert www.example.com /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
+> ./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
 ```
           X509v3 Key Usage: critical
                 Digital Signature, Key Encipherment
@@ -114,17 +113,36 @@ Data Base Updated
 Exit code 0 means that certificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
 # Generate .p12 
 Create openssl pkcs12 file containing private key and certficate. The certficates should be alredy create by *./ca.sh makecert* command.
-> ././ca.sh makep12 /filename/ /number/ /password/<br>
-* filename : filename of the certficate in the *$DIRCA/intermediate/private/number* directory
+> ././ca.sh makep12 /number/ /password/<br>
 * number : the subdirectory in *private* directory
 * password : encryption password for pkcs12 file generated.
 
-The pkcs12 file is generated in /tmp directory as *filename.p12* file.<br>
+The pkcs12 file is generated in /tmp directory as *CN.p12* file.<br>
 Example:<br>
->  ./ca.sh makep12 www.example.com 1000 secret
+>  ./ca.sh makep12 1000 secret
 ```
  ls /tmp/www.example.com.p12 
 /tmp/www.example.com.p12
 ```
+# Issue a certificate from CSR file 
+>./ca.sh csrcert /CSR file/<br>
+Produces a certficate signed by the CA using CSR file. 
 
+ ./ca.sh csrcert ./bigsql.csr 
+
+Example:
+>  ./ca.sh csrcert ./bigsql.csr 
+```
+..............
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+Certificate is to be certified until Mar 18 22:04:40 2021 GMT (375 days)
+
+Write out database with 1 new entries
+Data Base Updated
+/tmp/tmp.2YuqHAgV1F: OK
+NUM=1016
+```
 
