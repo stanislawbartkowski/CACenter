@@ -168,33 +168,69 @@ required_listofvars() {
 }
 
 movecertificate() {
-    local -r CERTNAME=$1
-    local -r TKEY=$2
-    local -r TCSR=$3
-    local -r TCERT=$4
+    local -r TKEY=$1
+    local -r TCSR=$2
+    local -r TCERT=$3
     local -r LASTNUM=`tail -n 1 $INDEXDB | cut -f 4`
+    local -r CERTNAME=`tail -n 1 $INDEXDB | cut -f 6 | sed -E 's/.*CN=(.*)/\1/' `
+    local -r DIR=$DIRCA/$INTERMEDIATE
 
     local -r  CERTDIR=$DIR/private/$LASTNUM
     mkdir -p  $CERTDIR
 
-    mv $TKEY  $CERTDIR/$CERTNAME.key.pem
+    [ -z "$TKEY" ] || mv $TKEY  $CERTDIR/$CERTNAME.key.pem
     mv $TCSR  $CERTDIR/$CERTNAME.csr.pem
-    mv $TCERT $CERTDIR/$CERTNAME.cert.pem    
+    mv $TCERT $CERTDIR/$CERTNAME.cert.pem
+    echo "NUM=$LASTNUM"
+}
+
+existfile() {
+    local -r FILENAME=$1
+    [ -f $FILENAME ] || logfail "$FILENAME does not exist, cannot generate p12"
 }
 
 genp12() {
-    local -r FILENAME="$1"
-    local -r NUM=$2
-    local -r PASS="$3"
+    local -r NUM=$1
+    local -r PASS="$2"
     local -r DIRC=$DIRCA/$INTERMEDIATE/private/$NUM
 
-    openssl pkcs12 -export -in $DIRC/$FILENAME.cert.pem  -inkey $DIRC/$FILENAME.key.pem -out /tmp/$FILENAME.p12 -password pass:$PASS
+    # look for CN name
+    local -r FILENAME=`cat $INDEXDB | cut -f 4,6 | grep $NUM | sed -E 's/.*CN=(.*)/\1/' `
+    [ -z "$FILENAME" ] && logfail "$NUM - cannot find the certficate number in $INDEXDB"
+    local -r KEYPEM=$DIRC/$FILENAME.key.pem
+    local -r CERTPEM=$DIRC/$FILENAME.cert.pem
+    existfile $KEYPEM
+    existfile $CERTPEM
+
+    local -r OUTP12=/tmp/$FILENAME.p12
+
+    openssl pkcs12 -export -in $CERTPEM  -inkey $KEYPEM -out $OUTP12 -password pass:$PASS
     [ $? -eq 0 ] || logfail "Failed to create $FILENAME.p12 file"
+    echo "OUT=$OUTP12"
+}
+
+createcertfromcsr() {
+    local -r CSRFILE=$1
+    local -r CERTFILE=$2
+    local -r DIR=$DIRCA/$INTERMEDIATE
+    openssl ca -config $DIR/$OPENSSL -passin pass:$INTERMEDIATEKEYPASSWD -extensions server_cert -days 375 -notext -md sha256 -in $CSRFILE -out $CERTFILE -batch
+    [ $? -eq 0 ] || logfail "Failed to create a CERT $CERTFILE"
+    xchmod 444 $CERTFILE
+    # verify the certificate
+    openssl verify -CAfile $CACHAIN $CERTFILE
+    [ $? -eq 0 ] || logfail "$CACHAIN, the verification of $CERTFILE failed"
+}
+
+csrcreatecertficate() {
+    local -r CSRFILE=`mktemp`
+    local -r CERTFILE=`mktemp`
+    cp $1 $CSRFILE
+    createcertfromcsr $CSRFILE $CERTFILE
+    movecertificate "" $CSRFILE $CERTFILE
 }
 
 createcertificate() {
-    local -r CERTNAME=$1
-    local -r CERTSUBJ="$2"
+    local -r CERTSUBJ="$1"
     local -r DIR=$DIRCA/$INTERMEDIATE
     local -r CERTKEY=`mktemp`
     local -r CSRFILE=`mktemp`
@@ -204,15 +240,9 @@ createcertificate() {
     [ $? -eq 0 ] || logfail "Failed to create a key $CERTKEY"
     xchmod 400 $CERTKEY
     openssl req -config $DIR/$OPENSSL -key $CERTKEY -new -sha256 -out $CSRFILE -subj "$CERTSUBJ"
-    [ $? -eq 0 ] || logfail "Failed to create a CSR $CSRNAME for $CERTSUBJ"
-    rm -f $CERTFILE
-    openssl ca -config $DIR/$OPENSSL -passin pass:$INTERMEDIATEKEYPASSWD -extensions server_cert -days 375 -notext -md sha256 -in $CSRFILE -out $CERTFILE -batch
-    [ $? -eq 0 ] || logfail "Failed to create a CERT $CERTFILE"
-    xchmod 444 $CERTFILE
-    # verify the certificate
-    openssl verify -CAfile $CACHAIN $CERTFILE
-    [ $? -eq 0 ] || logfail "$CACHAIN, the verification of $CERTFILE failed"
-    movecertificate $CERTNAME $CERTKEY $CSRFILE $CERTFILE
+    [ $? -eq 0 ] || logfail "Failed to create a CSR and KEY $CSRNAME for $CERTSUBJ"
+    createcertfromcsr $CSRFILE $CERTFILE
+    movecertificate $CERTKEY $CSRFILE $CERTFILE
 }
 
 printhelp() {
@@ -223,21 +253,25 @@ printhelp() {
     echo "./ca.sh create force"
     echo "  Creates new certificate center without warning. Previous certificate center is remove without confirmation"
     echo
-    echo "./ca.sh makecert certname certsub"
-    echo "  Produces certificate having the specified name and the subject provided"
-    echo "    certname : certificate filename"
+    echo "./ca.sh makecert certsub"
+    echo "  Produces certificate for the subject provided"
     echo "    certsub : certificate subject"
     echo "  Example:"
-    echo "./ca.sh makecert www.example.com /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com"
+    echo "./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com"
     echo
     echo "./ca.sh makep12 certname num password"
     echo "  Produce p12 file from existing key and certificate"
     echo "  The p12 file is generated to /tmp/certname.p12 file"
-    echo "    certname : certficate file name"
     echo "    num : number of the certificate"
     echo "    password : password to encrypt p12 file"
     echo "  Example:"
-    echo "./ca.sh makep12 www.example.com 1003 secret"
+    echo "./ca.sh makep12 1003 secret"
+    echo
+    echo "./ca.sh csrcert /csr file/"
+    echo " Produces certficate from CSR file"
+    echo "   /csr file/ CSR file"
+    echo " Example:"
+    echo "./ca.sh csrcest ./bigsql.csr"
 
     exit 4
 }
@@ -249,7 +283,6 @@ main() {
     local -r par1=$1
     local -r par2=$2
     local -r par3="$3"
-    local -r par4="$4"
 
     case $par1 in
     create) 
@@ -266,15 +299,20 @@ main() {
         esac
         ;;
     makecert) 
-        [ -z "$par2" ] || [ -z "$par3" ] && printhelp
-        createcertificate "$par2" "$par3"
+        [ -z "$par2" ] && printhelp
+        createcertificate "$par2"
         ;;
     makep12) 
-        [ -z "$par2" ] || [ -z "$par3" ] || [ -z "$par4" ] && printhelp
-        genp12 $par2 $par3 "$par4"
-        ;;          
+        [ -z "$par2" ] || [ -z "$par3" ] && printhelp
+        genp12 $par2 $par3 
+        ;;
+    csrcert)
+        [ -z "$par2" ] && printhelp
+        csrcreatecertficate $par2
+        ;;
     *) printhelp;;
     esac
 }
 
-main "$1" "$2" "$3" "$4"
+ main "$1" "$2" "$3" 
+
