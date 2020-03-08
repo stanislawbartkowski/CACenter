@@ -124,7 +124,7 @@ Example:<br>
  ls /tmp/www.example.com.p12 
 /tmp/www.example.com.p12
 ```
-# Issue a certificate from CSR file 
+# Issue a certificate using CSR file 
 >./ca.sh csrcert /CSR file/<br>
 Produces a certficate signed by the CA using CSR file. 
 
