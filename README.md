@@ -6,7 +6,8 @@ https://jamielinux.com/docs/openssl-certificate-authority/index.html.
 
 The following tasks are implemented:
 * Create root and intermediate Certificate Authority.
-* Issue a pair key/cert certificate signed by the intemediate Certificate Authority
+* Issue a pair key/cert certificate signed by the intermediate Certificate Authority
+* Issue a certificate signed by CA from CSR file
 * Produce on-demand .pk12 cert file containing key and certificate.
 
 # Files description
