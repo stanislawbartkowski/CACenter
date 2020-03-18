@@ -149,4 +149,12 @@ Data Base Updated
 /tmp/tmp.2YuqHAgV1F: OK
 NUM=1016
 ```
+# CACenter REST/API
+The certificate can be generated using Rest/API. Two options are supported: generate certficate through subject or CSR (Certificate Signing Request) file.
+## Installation
+Download and install RestService jar file https://github.com/stanislawbartkowski/RestService. It is the only dependency. Next prepare CARestAPI solution.
+> cd CARestApi<br>
+> mvn clean package -Dmaven.test.skip=true<br>
+
+
 
