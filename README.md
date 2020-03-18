@@ -37,7 +37,7 @@ Modify env.rc source file.
 | INTERMEDIATESUB | Intermediate authority subject (CN for root and intemediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
 | UNIQ | Possible values: yes/no | No: duplictated CN certificates are allowed
 
-**UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this contraint.<br>
+**UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this constraint.<br>
 All tasks are implemented in *ca.sh* bash script file. Exit code 0 means that the operation was completed successfully. Non-zero code means failure.
 
 # Create a new CA centre
@@ -95,8 +95,9 @@ www.example.com.cert.pem
 ```
 
 # Issue a certificate signed by this CA
-> ./ca.sh makecert certsub
-* certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same CN of root and intermediate CA certificate.
+> ./ca.sh makecert certsub /optional file name/
+* certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same as CN of root and intermediate CA certificate.
+* /optional file name/ if provided, the key/certificate pair and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer.
 
 Example:<br>
 > ./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
@@ -126,9 +127,10 @@ Example:<br>
 /tmp/www.example.com.p12
 ```
 # Issue a certificate using CSR file 
->./ca.sh csrcert /CSR file/<br>
+>./ca.sh csrcert /CSR file/ /optional file name/<br>
 
 Produces a certificate signed by the CA using CSR file. 
+* /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer.
 
  ./ca.sh csrcert ./bigsql.csr 
 
