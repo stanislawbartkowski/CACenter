@@ -1,7 +1,0 @@
-com/ca/restapi/RunCaCommand$StreamGobbler.class
-com/ca/restapi/RestServices$GenCertCSR.class
-com/ca/restapi/RestServices$ServiceHelper.class
-com/ca/restapi/RunCaCommand.class
-com/ca/restapi/RestServices$GenCert.class
-com/ca/restapi/CARestApi.class
-com/ca/restapi/RestServices.class
