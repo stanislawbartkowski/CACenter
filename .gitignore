@@ -17,3 +17,4 @@ CARestApi/target/classes/com/ca/restapi/RunCaCommand$StreamGobbler.class
 CARestApi/target/test-classes/com/ca/restapi/RunCaCommandTest.class
 CARestApi/target/test-classes/com/ca/restapi/RunRestHelper.class
 CARestApi/target/test-classes/com/ca/restapi/RunRestTest.class
+CARestApi/env.rc
