@@ -190,6 +190,7 @@ Generate certficate from subject
 | API | Description
 | --- | --- |
 | URL | /subcert
+| Method | POST
 | Query parameter | *subject*, a subject name. Example: C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com
 | HTTP response code | 200: success, any other code: failure
 | Response body | zip file containing key/certificate pair and CA certificate chain
@@ -232,6 +233,56 @@ Archive:  out.zip
      8754                     4 files
 
 ```
+Generate certificate from CST file<br>
 
+| API | Description
+| --- | --- |
+| URL | /csrcert
+| Method | POST
+| Query parameter | no parameters
+| Request body | CSR file
+| HTTP response code | 200: success, any other code: failure
+| Response body | zip file containing key/certificate pair and CA certificate chain
+
+Example<br>
+> curl -X POST -v  http://thinkde:9080/csrcert  --data-binary @/tmp/www.example.com.csr.pem -o out.zip
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* About to connect() to thinkde port 9080 (#0)
+*   Trying 192.168.0.206...
+* Connected to thinkde (192.168.0.206) port 9080 (#0)
+> POST /csrcert HTTP/1.1
+> User-Agent: curl/7.29.0
+> Host: thinkde:9080
+> Accept: */*
+> Content-Length: 1009
+> Content-Type: application/x-www-form-urlencoded
+> 
+} [data not shown]
+* upload completely sent off: 1009 out of 1009 bytes
+< HTTP/1.1 200 OK
+< Charset: utf8
+< Date: Wed, 18 Mar 2020 20:58:31 GMT
+< Access-control-allow-methods: OPTIONS, POST
+< Content-type: application/zip
+< Content-length: 5533
+< 
+{ [data not shown]
+100  6542  100  5533  100  1009  99904  18218 --:--:-- --:--:-- --:--:--  100k
+* Connection #0 to host thinkde left intact
+
+```
+> unzip -l out.zip
+```
+Archive:  out.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+     4098  03-18-2020 21:58   ca-chain.cert.pem
+     1972  03-18-2020 21:58   www.example.com.cert.pem
+     1009  03-18-2020 21:58   www.example.com.csr.pem
+---------                     -------
+     7079                     3 files
+```
 
 
