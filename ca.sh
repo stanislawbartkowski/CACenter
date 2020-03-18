@@ -1,4 +1,4 @@
-source ./env.rc
+source `dirname $0`/env.rc
 
 INTERMEDIATE=intermediate
 CURRENTDIR=`realpath \`dirname $0\``
@@ -11,6 +11,10 @@ INDEXDB=$DIRCA/$INTERMEDIATE/index.txt
 ROOTNAME=ca
 INTERMEDIATENAME=intermediate
 
+# ======================
+# logging utilities
+# ======================
+
 log() {
     local -r MESS="$1"
     echo $MESS
@@ -21,10 +25,17 @@ logfail() {
     exit 4
 }
 
-createcadir() {
-    local -r DIR=$1
-    rm -rf $DIR
-    mkdir $DIR
+# ========================
+# misc script utilties
+# ========================
+required_var() {
+  local -r VARIABLE=$1
+  [ -z "${!VARIABLE}" ] && logfail "Need to set environment variable $VARIABLE"
+}
+
+required_listofvars() {
+  local -r listv=$1
+  for value in $listv; do required_var $value; done
 }
 
 xchmod() {
@@ -32,6 +43,21 @@ xchmod() {
     local -r FILE=$2
     chmod $MOD $FILE
     [ $? -eq 0 ] || logfail "Error while chmod $MOD $FILE"
+}
+
+existfile() {
+    local -r FILENAME=$1
+    [ -f $FILENAME ] || logfail "$FILENAME does not exist, cannot generate p12"
+}
+
+# ===========================
+# Create CA centre
+# ===========================
+
+createcadir() {
+    local -r DIR=$1
+    rm -rf $DIR
+    mkdir $DIR
 }
 
 createdirs() {
@@ -89,7 +115,7 @@ createcert() {
     xchmod 444 $CERTFILE
 }
 
-createintermediatecert() {    
+createintermediatecert() {
     local -r DIR=$DIRCA/$INTERMEDIATE
     local -r KEYFILE=`keyname $DIR $INTERMEDIATENAME`
     local -r CSRNAME=`csrname $DIR $INTERMEDIATENAME`
@@ -157,20 +183,29 @@ printdata() {
     echo " Intermediate password: XXXXXXX"
 }
 
-required_var() {
-  local -r VARIABLE=$1
-  [ -z "${!VARIABLE}" ] && logfail "Need to set environment variable $VARIABLE"
-}
+# ==========================
+# certficates routines
+# ==========================
 
-required_listofvars() {
-  local -r listv=$1
-  for value in $listv; do required_var $value; done
+### --- FUNCTION -----------------------
+### extractcertname
+### Extract file/certficate name from index.txt file
+### Parameters:
+###   $1 : identifier
+### Result:
+###  Set to FILENAME variable
+### -------------------------------------
+extractcertname() {
+    local -r NUM=$1
+    FILENAME=`cat $INDEXDB | cut -f 4,6 | grep $NUM | sed -E 's/.*CN=(.*)/\1/' ` 
+    [ -z "$FILENAME" ] && logfail "$NUM - cannot find the certficate number in $INDEXDB"
 }
 
 movecertificate() {
     local -r TKEY=$1
     local -r TCSR=$2
     local -r TCERT=$3
+    local -r OUTFILE=$4
     local -r LASTNUM=`tail -n 1 $INDEXDB | cut -f 4`
     local -r CERTNAME=`tail -n 1 $INDEXDB | cut -f 6 | sed -E 's/.*CN=(.*)/\1/' `
     local -r DIR=$DIRCA/$INTERMEDIATE
@@ -181,13 +216,29 @@ movecertificate() {
     [ -z "$TKEY" ] || mv $TKEY  $CERTDIR/$CERTNAME.key.pem
     mv $TCSR  $CERTDIR/$CERTNAME.csr.pem
     mv $TCERT $CERTDIR/$CERTNAME.cert.pem
-    echo "NUM=$LASTNUM"
+    if [ -n "$OUTFILE" ]; then
+       genzipfile $LASTNUM $OUTFILE
+    fi
+    log "NUM=$LASTNUM"
 }
 
-existfile() {
-    local -r FILENAME=$1
-    [ -f $FILENAME ] || logfail "$FILENAME does not exist, cannot generate p12"
+genzipfile() {
+    local -r NUM=$1
+    local -r RESULTFILENAME=$2
+
+    local -r TEMPDIR=`mktemp -d`
+    local -r DIR=$DIRCA/$INTERMEDIATE
+    local -r DIRC=$DIR/private/$NUM
+    cp $DIRC/* $TEMPDIR
+    # include root and intermediate
+    cp $CACHAIN $TEMPDIR
+    rm -f $RESULTFILENAME
+    zip -j $RESULTFILENAME $TEMPDIR/*
+    [ $? -eq 0 ] || logfail "zip command filed"
+    rm -rf $TEMPDIR
+    log "$RESULTFILENAME created."
 }
+
 
 genp12() {
     local -r NUM=$1
@@ -195,8 +246,7 @@ genp12() {
     local -r DIRC=$DIRCA/$INTERMEDIATE/private/$NUM
 
     # look for CN name
-    local -r FILENAME=`cat $INDEXDB | cut -f 4,6 | grep $NUM | sed -E 's/.*CN=(.*)/\1/' `
-    [ -z "$FILENAME" ] && logfail "$NUM - cannot find the certficate number in $INDEXDB"
+    extractcertname $NUM
     local -r KEYPEM=$DIRC/$FILENAME.key.pem
     local -r CERTPEM=$DIRC/$FILENAME.cert.pem
     existfile $KEYPEM
@@ -225,12 +275,14 @@ csrcreatecertficate() {
     local -r CSRFILE=`mktemp`
     local -r CERTFILE=`mktemp`
     cp $1 $CSRFILE
+    local -r OUTFILE=$2
     createcertfromcsr $CSRFILE $CERTFILE
-    movecertificate "" $CSRFILE $CERTFILE
+    movecertificate "" $CSRFILE $CERTFILE $OUTFILE
 }
 
 createcertificate() {
     local -r CERTSUBJ="$1"
+    local -r OUTFILE=$2
     local -r DIR=$DIRCA/$INTERMEDIATE
     local -r CERTKEY=`mktemp`
     local -r CSRFILE=`mktemp`
@@ -242,24 +294,29 @@ createcertificate() {
     openssl req -config $DIR/$OPENSSL -key $CERTKEY -new -sha256 -out $CSRFILE -subj "$CERTSUBJ"
     [ $? -eq 0 ] || logfail "Failed to create a CSR and KEY $CSRNAME for $CERTSUBJ"
     createcertfromcsr $CSRFILE $CERTFILE
-    movecertificate $CERTKEY $CSRFILE $CERTFILE
+    movecertificate $CERTKEY $CSRFILE $CERTFILE $OUTFILE
 }
 
+# ==============================
+# main
+# ==============================
+
 printhelp() {
-    echo "Incorrect parameters"
+    echo "Parameters"
     echo
     echo "./ca.sh create safe"
     echo "  Creates new certificate center using verbose output. Requires confirmation before proceeding"
     echo "./ca.sh create force"
-    echo "  Creates new certificate center without warning. Previous certificate center is remove without confirmation"
+    echo "  Creates new certificate center without warning. Previous certificate center is removed without confirmation"
     echo
-    echo "./ca.sh makecert certsub"
-    echo "  Produces certificate for the subject provided"
+    echo "./ca.sh makecert certsub /optional file name/"
+    echo "  Produces signed certificate for the subject provided"
     echo "    certsub : certificate subject"
+    echo "    /optional file name/ : if exist, the key, certificate and chain certfificate is compressed in the file name provided"
     echo "  Example:"
     echo "./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com"
     echo
-    echo "./ca.sh makep12 certname num password"
+    echo "./ca.sh makep12 num password"
     echo "  Produce p12 file from existing key and certificate"
     echo "  The p12 file is generated to /tmp/certname.p12 file"
     echo "    num : number of the certificate"
@@ -267,11 +324,13 @@ printhelp() {
     echo "  Example:"
     echo "./ca.sh makep12 1003 secret"
     echo
-    echo "./ca.sh csrcert /csr file/"
-    echo " Produces certficate from CSR file"
-    echo "   /csr file/ CSR file"
+    echo "./ca.sh csrcert /csr file/ /optional file name/"
+    echo "    /csr file/ CSR file"
+    echo "    /optional file name/ : if exist, the certificate (without key) and chain certfificate is compressed in the file name provided"
+    echo " Produces signed certficate from CSR file"
     echo " Example:"
-    echo "./ca.sh csrcest ./bigsql.csr"
+    echo "./ca.sh csrcert ./bigsql.csr"
+    echo "./ca.sh csrcert ./bigsql.csr /tmp/cert.zip"
 
     exit 4
 }
@@ -283,6 +342,7 @@ main() {
     local -r par1=$1
     local -r par2=$2
     local -r par3="$3"
+    local -r par4="$4"
 
     case $par1 in
     create) 
@@ -300,7 +360,7 @@ main() {
         ;;
     makecert) 
         [ -z "$par2" ] && printhelp
-        createcertificate "$par2"
+        createcertificate "$par2" $par3
         ;;
     makep12) 
         [ -z "$par2" ] || [ -z "$par3" ] && printhelp
@@ -308,11 +368,11 @@ main() {
         ;;
     csrcert)
         [ -z "$par2" ] && printhelp
-        csrcreatecertficate $par2
+        csrcreatecertficate $par2 $par3
         ;;
     *) printhelp;;
     esac
 }
 
- main "$1" "$2" "$3" 
+ main "$1" "$2" "$3" "$4"
 
