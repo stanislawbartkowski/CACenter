@@ -5,6 +5,7 @@ bigsql.csr
 -batch
 bigsql.sb.com.cert.pem
 aa1.fyre.ibm.com.cert.pem
+RestService/
 CARestApi/target/classes/www.example.com.csr.pem
 CARestApi/target/classes/com/ca/restapi/CARestApi.class
 CARestApi/target/classes/com/ca/restapi/RestServices.class
