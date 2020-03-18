@@ -156,5 +156,82 @@ Download and install RestService jar file https://github.com/stanislawbartkowski
 > cd CARestApi<br>
 > mvn clean package -Dmaven.test.skip=true<br>
 
+Verify<br>
+>ll target
+```
+drwxrwxr-x. 2 sb sb     6 Mar 18 20:58 archive-tmp
+-rw-rw-r--. 1 sb sb 12799 Mar 18 20:58 CARestApi-1.0-SNAPSHOT.jar
+-rw-rw-r--. 1 sb sb 33472 Mar 18 20:58 CARestApi-1.0-SNAPSHOT-jar-with-dependencies.jar
+drwxrwxr-x. 3 sb sb    48 Mar 18 20:58 classes
+drwxrwxr-x. 3 sb sb    25 Mar 18 20:58 generated-sources
+drwxrwxr-x. 2 sb sb    84 Mar 18 20:58 lib
+drwxrwxr-x. 2 sb sb    28 Mar 18 20:58 maven-archiver
+drwxrwxr-x. 3 sb sb    35 Mar 18 20:58 maven-status
+
+```
+## Customize
+>cp template/env.rc .<br>
+env.rc contains a single parameter, a port number to use. default is 9080<br>
+## Run
+>./run.sh<br>
+```
+Mar 18, 2020 9:48:30 PM com.rest.restservice.RestLogger info
+INFO: ../ca.sh
+Mar 18, 2020 9:48:30 PM com.rest.restservice.RestLogger info
+INFO: Start HTTP Server, listening on port 9080
+Mar 18, 2020 9:48:30 PM com.rest.restservice.RestLogger info
+INFO: Register service: subcert
+Mar 18, 2020 9:48:30 PM com.rest.restservice.RestLogger info
+INFO: Register service: csrcert
+
+```
+### Rest/API 
+Generate certficate from subject
+| API | Description
+| --- | --- |
+| URL | /subcert
+| Query parameter | *subject*, a subject name. Example: C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com
+| HTTP response code | 200: success, any other code: failure
+| Response body | zip file containing key/certificate pair and CA certificate chain
+
+Example:
+> curl -X POST -v  http://localhost:9080/subcert?subject=/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com -o out.zip<br>
+```
+ % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* About to connect() to thinkde port 9080 (#0)
+*   Trying 192.168.0.206...
+* Connected to thinkde (192.168.0.206) port 9080 (#0)
+> POST /subcert?subject=/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com HTTP/1.1
+> User-Agent: curl/7.29.0
+> Host: thinkde:9080
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Charset: utf8
+< Date: Wed, 18 Mar 2020 20:54:40 GMT
+< Access-control-allow-methods: OPTIONS, POST
+< Content-type: application/zip
+< Content-length: 6990
+< 
+{ [data not shown]
+100  6990  100  6990    0     0  39526      0 --:--:-- --:--:-- --:--:-- 39715
+* Connection #0 to host thinkde left intact
+
+```
+> unzip -l out.zip<br>
+```
+Archive:  out.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+     4098  03-18-2020 21:54   ca-chain.cert.pem
+     1972  03-18-2020 21:54   www.example.com.cert.pem
+     1009  03-18-2020 21:54   www.example.com.csr.pem
+     1675  03-18-2020 21:54   www.example.com.key.pem
+---------                     -------
+     8754                     4 files
+
+```
+
 
 
