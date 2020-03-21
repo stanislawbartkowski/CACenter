@@ -288,7 +288,7 @@ Archive:  out.zip
 Configure CACenter (env.rc) and CARestAPI as described above. Pay attention that *DIRCA* variable will reflect a directory inside docker container.
 > ./createdocker.sh<br>
 
-If succesfull, the docker container *cacenter* should be up and running.
+If successfull, the docker container *cacenter* should be up and running.
 >docker ps<br>
 ```
 f8fcc7bed389        cacenter                 "./restrun.sh"           7 minutes ago       Up 6 minutes        0.0.0.0:9080->9080/tcp    cacenter
