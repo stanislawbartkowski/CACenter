@@ -8,3 +8,5 @@ aa1.fyre.ibm.com.cert.pem
 RestService/
 CARestApi/target/*
 CARestApi/env.rc
+/docker
+restrun.sh
