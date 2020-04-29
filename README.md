@@ -97,7 +97,7 @@ www.example.com.cert.pem
 # Issue a certificate signed by this CA
 > ./ca.sh makecert certsub /optional file name/
 * certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same as CN of root and intermediate CA certificate.
-* /optional file name/ if provided, the key/certificate pair and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer.
+* /optional output file name/ if not provided, the generated certifcate and root certificate are stored in /tmp directory. 
 
 Example:<br>
 > ./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
