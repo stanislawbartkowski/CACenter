@@ -2,7 +2,7 @@
 
 A simple Certificate Authority centre issuing server and client SSL certificates. It is an automated version of the procedure described in this webpage.
 
-https://jamielinux.com/docs/openssl-certificate-authority/index.html.
+https://jamielinux.com/docs/openssl-certificate-authority/index.html
 
 The following tasks are implemented:
 * Create root and intermediate Certificate Authority.
