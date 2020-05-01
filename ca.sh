@@ -263,8 +263,17 @@ genp12() {
 createcertfromcsr() {
     local -r CSRFILE=$1
     local -r CERTFILE=$2
+    local -r CLIENT=$3
     local -r DIR=$DIRCA/$INTERMEDIATE
-    openssl ca -config $DIR/$OPENSSL -passin pass:$INTERMEDIATEKEYPASSWD -extensions server_cert -days 375 -notext -md sha256 -in $CSRFILE -out $CERTFILE -batch
+
+    case $CLIENT in 
+       ""|server) EXTENSION="-extensions server_cert";;
+       client) EXTENSION="";;
+        *) logfail "$CLIENT - parametr should be equal to 'client' or empty meaning server";;
+    esac
+
+    openssl ca -config $DIR/$OPENSSL -passin pass:$INTERMEDIATEKEYPASSWD $EXTENSION -days 375 -notext -md sha256 -in $CSRFILE -out $CERTFILE -batch
+
     [ $? -eq 0 ] || logfail "Failed to create a CERT $CERTFILE"
     xchmod 444 $CERTFILE
     # verify the certificate
@@ -277,13 +286,15 @@ csrcreatecertficate() {
     local -r CERTFILE=`mktemp`
     cp $1 $CSRFILE
     local -r OUTFILE=$2
-    createcertfromcsr $CSRFILE $CERTFILE
+    local -r CLIENT=$3
+    createcertfromcsr $CSRFILE $CERTFILE $CLIENT
     movecertificate "" $CSRFILE $CERTFILE $OUTFILE
 }
 
 createcertificate() {
     local -r CERTSUBJ="$1"
     local -r OUTFILE=$2
+    local -r CLIENT=$3
     local -r DIR=$DIRCA/$INTERMEDIATE
     local -r CERTKEY=`mktemp`
     local -r CSRFILE=`mktemp`
@@ -294,7 +305,7 @@ createcertificate() {
     xchmod 400 $CERTKEY
     openssl req -config $DIR/$OPENSSL -key $CERTKEY -new -sha256 -out $CSRFILE -subj "$CERTSUBJ"
     [ $? -eq 0 ] || logfail "Failed to create a CSR and KEY $CSRNAME for $CERTSUBJ"
-    createcertfromcsr $CSRFILE $CERTFILE
+    createcertfromcsr $CSRFILE $CERTFILE $CLIENT
     movecertificate $CERTKEY $CSRFILE $CERTFILE $OUTFILE
 }
 
@@ -314,6 +325,7 @@ printhelp() {
     echo "  Produces signed certificate for the subject provided"
     echo "    certsub : certificate subject"
     echo "    /optional file name/ : if exist, the key, certificate and chain certfificate is compressed in the file name provided"
+    echo "    /optional/ client or server "
     echo "  Example:"
     echo "./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com"
     echo
@@ -325,7 +337,7 @@ printhelp() {
     echo "  Example:"
     echo "./ca.sh makep12 1003 secret"
     echo
-    echo "./ca.sh csrcert /csr file/ /optional file name/"
+    echo "./ca.sh csrcert /csr file/ /optional file name/ /client|server/"
     echo "    /csr file/ CSR file"
     echo "    /optional file name/ : if exist, the certificate (without key) and chain certfificate is compressed in the file name provided"
     echo " Produces signed certficate from CSR file"
@@ -361,7 +373,7 @@ main() {
         ;;
     makecert) 
         [ -z "$par2" ] && printhelp
-        createcertificate "$par2" $par3
+        createcertificate "$par2" $par3 $par4
         ;;
     makep12) 
         [ -z "$par2" ] || [ -z "$par3" ] && printhelp
@@ -369,7 +381,7 @@ main() {
         ;;
     csrcert)
         [ -z "$par2" ] && printhelp
-        csrcreatecertficate $par2 $par3
+        csrcreatecertficate $par2 $par3 $par4
         ;;
     *) printhelp;;
     esac
