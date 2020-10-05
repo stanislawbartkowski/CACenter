@@ -115,7 +115,7 @@ Data Base Updated
 Exit code 0 means that certificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
 # Generate .p12 
 Create openssl pkcs12 file containing private key and certficate. The certficates should be alredy create by *./ca.sh makecert* command.
-> ././ca.sh makep12 /number/ /password/<br>
+>  ./ca.sh makep12 /number/ /password/<br>
 * number : the subdirectory in *private* directory
 * password : encryption password for pkcs12 file generated.
 
@@ -130,11 +130,9 @@ Example:<br>
 >./ca.sh csrcert /CSR file/ /optional file name/<br>
 
 Produces a certificate signed by the CA using CSR file. 
-* /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer.
+* /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer. Leaving the file create a potential security threat.
 
- ./ca.sh csrcert ./bigsql.csr 
-
-Example:
+ xample:
 >  ./ca.sh csrcert ./bigsql.csr 
 ```
 ..............
