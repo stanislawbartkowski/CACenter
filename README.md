@@ -94,7 +94,7 @@ www.example.com.csr.pem
 www.example.com.cert.pem
 ```
 
-# Issue a certificate signed by this CA
+# Issue a private key/certificate signed by this CA
 > ./ca.sh makecert certsub /optional file name/
 * certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same as CN of root and intermediate CA certificate.
 * /optional output file name/ if not provided, the generated certifcate and root certificate are stored in /tmp directory. 
@@ -171,6 +171,7 @@ drwxrwxr-x. 3 sb sb    35 Mar 18 20:58 maven-status
 ```
 ## Customize
 >cp template/env.rc .<br>
+
 env.rc contains a single parameter, a port number to use. default is 9080<br>
 ## Run
 >./run.sh<br>
