@@ -147,6 +147,25 @@ Data Base Updated
 /tmp/tmp.2YuqHAgV1F: OK
 NUM=1016
 ```
+> ./ca.sh csrcert ./bigsql.csr bigsql.zip
+```
+.............. 
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+Certificate is to be certified until Oct 15 18:57:19 2021 GMT (375 days)
+
+Write out database with 1 new entries
+Data Base Updated
+/tmp/tmp.bsjpG1j5I9: OK
+  adding: ca-chain.cert.pem (deflated 32%)
+  adding: hdm1.sb.com.cert.pem (deflated 27%)
+  adding: hdm1.sb.com.csr.pem (deflated 25%)
+c.zip created.
+NUM=1004
+```
+
 # CACenter REST/API
 The certificate can be generated using Rest/API. Two options are supported: generate certficate through subject or CSR (Certificate Signing Request) file.
 ## Installation
