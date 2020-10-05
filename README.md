@@ -132,7 +132,7 @@ Example:<br>
 Produces a certificate signed by the CA using CSR file. 
 * /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer. Leaving the file create a potential security threat.
 
- xample:
+Example:
 >  ./ca.sh csrcert ./bigsql.csr 
 ```
 ..............
