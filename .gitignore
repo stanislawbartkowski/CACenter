@@ -12,3 +12,5 @@ CARestApi/env.rc
 restrun.sh
 certreq.csr
 x.zip
+/crt
+/csrs
