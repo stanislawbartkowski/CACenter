@@ -94,7 +94,7 @@ www.example.com.csr.pem
 www.example.com.cert.pem
 ```
 
-# Issue a certificate signed by this CA
+# Issue a private key/certificate signed by this CA
 > ./ca.sh makecert certsub /optional file name/
 * certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same as CN of root and intermediate CA certificate.
 * /optional output file name/ if not provided, the generated certifcate and root certificate are stored in /tmp directory. 
@@ -115,7 +115,7 @@ Data Base Updated
 Exit code 0 means that certificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
 # Generate .p12 
 Create openssl pkcs12 file containing private key and certficate. The certficates should be alredy create by *./ca.sh makecert* command.
-> ././ca.sh makep12 /number/ /password/<br>
+>  ./ca.sh makep12 /number/ /password/<br>
 * number : the subdirectory in *private* directory
 * password : encryption password for pkcs12 file generated.
 
@@ -130,9 +130,7 @@ Example:<br>
 >./ca.sh csrcert /CSR file/ /optional file name/<br>
 
 Produces a certificate signed by the CA using CSR file. 
-* /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer.
-
- ./ca.sh csrcert ./bigsql.csr 
+* /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer. Leaving the file create a potential security threat.
 
 Example:
 >  ./ca.sh csrcert ./bigsql.csr 
@@ -149,6 +147,25 @@ Data Base Updated
 /tmp/tmp.2YuqHAgV1F: OK
 NUM=1016
 ```
+> ./ca.sh csrcert ./bigsql.csr bigsql.zip
+```
+.............. 
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+Certificate is to be certified until Oct 15 18:57:19 2021 GMT (375 days)
+
+Write out database with 1 new entries
+Data Base Updated
+/tmp/tmp.bsjpG1j5I9: OK
+  adding: ca-chain.cert.pem (deflated 32%)
+  adding: hdm1.sb.com.cert.pem (deflated 27%)
+  adding: hdm1.sb.com.csr.pem (deflated 25%)
+c.zip created.
+NUM=1004
+```
+
 # CACenter REST/API
 The certificate can be generated using Rest/API. Two options are supported: generate certficate through subject or CSR (Certificate Signing Request) file.
 ## Installation
@@ -171,6 +188,7 @@ drwxrwxr-x. 3 sb sb    35 Mar 18 20:58 maven-status
 ```
 ## Customize
 >cp template/env.rc .<br>
+
 env.rc contains a single parameter, a port number to use. default is 9080<br>
 ## Run
 >./run.sh<br>
