@@ -11,6 +11,6 @@ CARestApi/env.rc
 /docker
 restrun.sh
 certreq.csr
-x.zip
+*.zip
 /crt
 /csrs
