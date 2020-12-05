@@ -38,6 +38,7 @@ Modify env.rc source file.
 | UNIQ | Possible values: yes/no | No: duplictated CN certificates are allowed
 
 **UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this constraint.<br>
+<br>
 All tasks are implemented in *ca.sh* bash script file. Exit code 0 means that the operation was completed successfully. Non-zero code means failure.
 
 # Create a new CA centre
