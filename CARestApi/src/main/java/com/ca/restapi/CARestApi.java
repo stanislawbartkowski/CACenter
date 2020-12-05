@@ -3,9 +3,7 @@ package com.ca.restapi;
 import com.rest.restservice.RestLogger;
 import com.rest.restservice.RestStart;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public class CARestApi extends RestStart {
@@ -38,7 +36,7 @@ public class CARestApi extends RestStart {
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException,Exception {
         if (args.length != 2) {
             help();
         }
