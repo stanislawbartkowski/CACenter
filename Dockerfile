@@ -1,5 +1,6 @@
 FROM openjdk:8
 MAINTAINER "sb" <stanislawbartkowski@gmail.com>
+ARG RESTPORT
 
 RUN apt-get update && apt-get install -y zip
 COPY ca.sh .
@@ -10,4 +11,5 @@ RUN ./ca.sh create force
 
 COPY CARestApi/target/CARestApi-1.0-SNAPSHOT-jar-with-dependencies.jar .
 COPY restrun.sh .
+EXPOSE ${RESTPORT}
 ENTRYPOINT ["./restrun.sh"]

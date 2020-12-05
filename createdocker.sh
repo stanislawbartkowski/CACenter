@@ -9,5 +9,5 @@ EOF
 
 chmod 755 restrun.sh
 
-docker build --build-arg PORT=$PORT -t cacenter . 
-docker run --name cacenter -d -p $PORT:$PORT cacenter
+$DOCKER build --build-arg RESTPORT=$PORT -t cacenter . 
+$DOCKER run --name cacenter -d -p $PORT:$PORT cacenter
