@@ -10,4 +10,3 @@ EOF
 chmod 755 restrun.sh
 
 $DOCKER build --build-arg RESTPORT=$PORT -t cacenter . 
-$DOCKER run --name cacenter -d -p $PORT:$PORT cacenter
