@@ -303,14 +303,18 @@ Archive:  out.zip
 ---------                     -------
      7079                     3 files
 ```
-### Docker
-Configure CACenter (env.rc) and CARestAPI as described above. Pay attention that *DIRCA* variable will reflect a directory inside docker container.
+## Docker/Podman
+### Create image
+Configure CACenter (env.rc) and CARestAPI as described above. Create Docker image.
 > ./createdocker.sh<br>
+### Create container
 
-If successful, the docker container *cacenter* should be up and running.
->docker ps<br>
-```
-f8fcc7bed389        cacenter                 "./restrun.sh"           7 minutes ago       Up 6 minutes        0.0.0.0:9080->9080/tcp    cacenter
-```
+*PORT* specified in *CARestApi/env.rc* resource file. Default is 9080. Use default port or customize port to different value. This storage for generated certificates is epheremal and will be destroyed together with container.
+
+> podman run --name cacenter -d -p 9800:9800 cacenter
+
+Use persistent storage.
+
+> podman run --name cacenter -d -p 9800:9800 cacenter -v /var/cacenter:$HOME/cacenter
 
 
