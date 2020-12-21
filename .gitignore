@@ -9,7 +9,6 @@ RestService/
 CARestApi/target/*
 CARestApi/env.rc
 /docker
-restrun.sh
 certreq.csr
 *.zip
 /crt
