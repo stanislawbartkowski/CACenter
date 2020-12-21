@@ -315,6 +315,7 @@ Configure CACenter (env.rc) and CARestAPI as described above. Create Docker imag
 
 Use persistent storage.
 
-> podman run --name cacenter -d -p 9800:9800 cacenter -v /var/cacenter:$HOME/cacenter
+> mkdir $HOME/cacenter<br>
+> podman run --name cacenter -d -p 9800:9800 -v $HOME/cacenter:/var/cacenter cacenter 
 
 
