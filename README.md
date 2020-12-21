@@ -252,7 +252,7 @@ Archive:  out.zip
      8754                     4 files
 
 ```
-Generate certificate from CST file<br>
+Generate certificate from CSR file<br>
 
 | API | Description
 | --- | --- |
