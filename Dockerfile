@@ -2,8 +2,12 @@ FROM openjdk:8
 MAINTAINER "sb" <stanislawbartkowski@gmail.com>
 ARG RESTPORT
 ENV DIR=/var/cacenter
+ENV WORKDIR=/usr/local/cacenter
 
-RUN apt-get update && apt-get install -y zip 
+RUN apt-get update && apt-get install -y zip && \
+    mkdir -p ${WORKDIR} && chmod 755 ${WORKDIR}
+
+WORKDIR ${WORKDIR}
 
 COPY ca.sh .
 COPY env.rc .
