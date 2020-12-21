@@ -309,11 +309,11 @@ Configure CACenter (env.rc) and CARestAPI as described above. Create Docker imag
 > ./createdocker.sh<br>
 ### Create container
 
-*PORT* specified in *CARestApi/env.rc* resource file. Default is 9080. Use default port or customize port to different value. This storage for generated certificates is epheremal and will be destroyed together with the container.
+*PORT* specified in *CARestApi/env.rc* resource file. Default is 9080. Use default port or customize port to different value. In this method of container creation,  a storage for generated certificates is epheremal and will be destroyed together with the container.
 
 > podman run --name cacenter -d -p 9080:9080 cacenter
 
-Use persistent storage.
+Use persistent storage. If SELinux enabled is enabled as recommended, configure SELinux context.
 
 > mkdir $HOME/cacenter<br>
 > sudo semanage fcontext -a -t container_file_t '$HOME/cacenter(/.*)?'<br>
