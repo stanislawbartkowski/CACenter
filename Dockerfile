@@ -21,5 +21,5 @@ COPY CARestApi/target/CARestApi-1.0-SNAPSHOT-jar-with-dependencies.jar .
 COPY restrun.sh .
 EXPOSE ${RESTPORT}
 VOLUME ${DIR}
-#ENTRYPOINT ["./restrun.sh"]
-CMD ["sleep","60m"]
+ENTRYPOINT ["./restrun.sh"]
+#CMD ["sleep","60m"]
