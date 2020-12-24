@@ -321,6 +321,15 @@ Use persistent storage. If SELinux enabled is enabled as recommended, configure 
 
 > podman run --name cacenter -d -p 9080:9080 -v $HOME/cacenter:/var/cacenter cacenter 
 
+### Publish image
+
+Image created can be made public, for instance, in *quay.io*
+
+> podman tag cacenter quay.io/stanislawbartkowski/cacenter:latest<br>
+
+> podman push quay.io/stanislawbartkowski/cacenter:latest<br>
+
+
 ### OpenShift/Kubernetes
 Having image available in public space, for instanca *quay.io* it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* file are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
 
