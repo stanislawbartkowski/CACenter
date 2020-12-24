@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cacenter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cacenter
+  template:
+    metadata:
+      labels:
+        app: cacenter
+    spec:
+      containers:
+      - name: cacenter
+        image: quay.io/stanislawbartkowski/cacenter:latest
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: cacenter-pv
+            mountPath: /var/cacenter
+      volumes:
+        - name: cacenter-pv
+          persistentVolumeClaim:
+            claimName: cacenter-claim          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cacenter
+    name: cacenter
+  name: cacenter
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: cacenter
