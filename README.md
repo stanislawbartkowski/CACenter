@@ -34,8 +34,8 @@ Modify env.rc source file.
 | ROOTKEYPASSWORD | Password for root key/cert credentials| secret
 | ROOTSUB | Root authority subject | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=thinkde.sb.com"
 | INTERMEDIATEKEYPASSWD | Password for intermediate key/cert credentials | secret
-| INTERMEDIATESUB | Intermediate authority subject (CN for root and intemediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
-| UNIQ | Possible values: yes/no | No: duplictated CN certificates are allowed
+| INTERMEDIATESUB | Intermediate authority subject (CN for root and intermediate should be the same) | "/C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=IntermediateRoom/CN=thinkde.sb.com"
+| UNIQ | Possible values: yes/no | No: duplicated CN certificates are allowed
 
 **UNIQ** variable is used to set value of *unique_subject* in the intermediate openssl.cnf file. If *yes*, only a single CN value in the certificates managed by this CA is allowed. Value *no* relax this constraint.<br>
 <br>
@@ -98,7 +98,7 @@ www.example.com.cert.pem
 # Issue a private key/certificate signed by this CA
 > ./ca.sh makecert certsub /optional file name/
 * certsub, the subject of the new certificate. The CN (Common Name) mustn't be the same as CN of root and intermediate CA certificate.
-* /optional output file name/ if not provided, the generated certifcate and root certificate are stored in /tmp directory. 
+* /optional output file name/ if not provided, the generated certificate and root certificate are stored in /tmp directory. 
 
 Example:<br>
 > ./ca.sh makecert /C=PL/ST=Mazovia/L=Warsaw/O=MyHome/OU=MyRoom/CN=www.example.com<br>
@@ -113,9 +113,9 @@ Write out database with 1 new entries
 Data Base Updated
 /tmp/tmp.TqrQoFdLE7: OK
 ```
-Exit code 0 means that certificate was created succesfully, other code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
+Exit code 0 means that certificate was created successfully, anoother code is returned in case of any failure. The *$DIRCA/intermediate/index.txt* file is appended and the newly created certificated are stored in the *$DIRCA/intermediate/private/NUMBER* directory.
 # Generate .p12 
-Create openssl pkcs12 file containing private key and certficate. The certficates should be alredy create by *./ca.sh makecert* command.
+Create openssl pkcs12 file containing private key and certficate. The certificates should be already create by *./ca.sh makecert* command.
 >  ./ca.sh makep12 /number/ /password/<br>
 * number : the subdirectory in *private* directory
 * password : encryption password for pkcs12 file generated.
@@ -131,7 +131,7 @@ Example:<br>
 >./ca.sh csrcert /CSR file/ /optional file name/<br>
 
 Produces a certificate signed by the CA using CSR file. 
-* /optional file name/ if provided, the certificate and CA chain is zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer. Leaving the file create a potential security threat.
+* /optional file name/ if provided, the certificate and CA chain are zipped in this file. Important: it is the responsibility of the requester to remove the file if not needed any longer. Leaving the file create a potential security threat.
 
 Example:
 >  ./ca.sh csrcert ./bigsql.csr 
@@ -168,7 +168,7 @@ NUM=1004
 ```
 
 # CACenter REST/API
-The certificate can be generated using Rest/API. Two options are supported: generate certficate through subject or CSR (Certificate Signing Request) file.
+The certificate can be generated using Rest/API. Two options are supported: generate certificate through subject or CSR (Certificate Signing Request) file.
 ## Installation
 Download and install RestService jar file https://github.com/stanislawbartkowski/RestService. It is the only dependency. Then prepare CARestAPI solution.
 > cd CARestApi<br>
@@ -205,7 +205,7 @@ INFO: Register service: csrcert
 
 ```
 ### Rest/API 
-Generate certficate from subject
+Generate certificate from subject
 | API | Description
 | --- | --- |
 | URL | /subcert
@@ -309,7 +309,7 @@ Configure CACenter (env.rc) and CARestAPI as described above. Create Docker imag
 > ./createdocker.sh<br>
 ### Create container
 
-*PORT* specified in *CARestApi/env.rc* resource file. Default is 9080. Use default port or customize port to different value. In this method of container creation,  a storage for generated certificates is epheremal and will be destroyed together with the container.
+*PORT* specified in *CARestApi/env.rc* resource file. Default is 9080. Use default port or customize port to a different value. In this method of container creation, storage for generated certificates is ephemeral and will be destroyed together with the container.
 
 > podman run --name cacenter -d -p 9080:9080 cacenter
 
@@ -331,13 +331,13 @@ Image created can be made public, for instance, in *quay.io*
 
 
 ### OpenShift/Kubernetes
-Having image available in public space, for instanca *quay.io* it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* file are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
+Having image available in public space, for instanca *quay.io* it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* files are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
 
 Important: Replica factor is set to 1. The CACenter is not calibrated to run in a parallel fashion.
 
 | yaml file | Deploy | Description |
 | ----- | ----- | ----- |
-| cacenter.yaml | oc create -f cacenter.yaml | Creates Deployment with ephemeral storage. Not recommended, the generated certificates will be wiped out together with container.
+| cacenter.yaml | oc create -f cacenter.yaml | Creates Deployment with ephemeral storage. Not recommended, the generated certificates will be wiped out together with the container.
 | cacenter-pv.yaml | oc create -f cacenter-pv.yaml | Creates Deployment with external storage, recommended. The PVN name is *cacenter-claim*. 
 | claim-pv.yaml | oc create -f claim-pv | Creates PVC in default Storage Class. The storage capacity claimed is 10M.
 
