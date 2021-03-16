@@ -3,6 +3,7 @@ apiVersion: v1
 metadata:
   name: cacenter-claim
 spec:
+  storageClassName: rook-cephfs
   accessModes:
     - ReadWriteMany
   resources:

@@ -14,9 +14,9 @@ COPY ca.sh .
 COPY env.rc .
 RUN echo "DIRCA=${DIR}" >>env.rc
 RUN echo "RESTPORT=${RESTPORT}" >> env.rc
+RUN echo "CADIR=." > envr.rc
 COPY openssl.cnf .
 COPY intermediateopenssl.cnf .
-# RUN ./ca.sh create force
 
 COPY CARest/target/CARestApi-1.0-SNAPSHOT-jar-with-dependencies.jar .
 COPY CARest/csrcert.sh .
