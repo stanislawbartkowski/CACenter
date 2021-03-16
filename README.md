@@ -354,7 +354,7 @@ Image created can be made public, for instance, in *quay.io*
 
 
 ### OpenShift/Kubernetes
-Having image available in public space, for instanca *quay.io* it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* files are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
+Having image available in public space, for instance *quay.io*, it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* files are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
 
 Important: Replica factor is set to 1. The CACenter is not calibrated to run in a parallel fashion.
 
