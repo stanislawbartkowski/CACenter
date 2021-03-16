@@ -188,9 +188,9 @@ drwxrwxr-x. 3 sb sb    35 Mar 18 20:58 maven-status
 
 ```
 ## Customize
->cp template/env.rc .<br>
+>cp template/envr.rc .<br>
 
-env.rc contains a single parameter, a port number to use. default is 9080<br>
+envr.rc contains a single parameter, a port number to use. default is 9080<br>
 ## Run
 >./run.sh<br>
 ```
