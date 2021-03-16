@@ -361,7 +361,7 @@ Important: Replica factor is set to 1. The CACenter is not calibrated to run in 
 | yaml file | Deploy | Description |
 | ----- | ----- | ----- |
 | cacenter.yaml | oc create -f cacenter.yaml | Creates Deployment with ephemeral storage. Not recommended, the generated certificates will be wiped out together with the container.
-| cacenter-pv.yaml | oc create -f cacenter-pv.yaml | Creates Deployment with external storage, recommended. The PVN name is *cacenter-claim*. 
+| cacenter-pv.yaml | oc create -f cacenter-pv.yaml | Creates Deployment with external storage, recommended. The PVC name is *cacenter-claim*. 
 | claim-pv.yaml | oc create -f claim-pv | Creates PVC in default Storage Class. The storage capacity claimed is 10M.
 
 In OpenShift cluster, use *route* to create external access to *CACenter* service.
