@@ -170,7 +170,30 @@ NUM=1004
 # CACenter REST/API
 The certificate can be generated using Rest/API. Two options are supported: generate certificate through subject or CSR (Certificate Signing Request) file.
 ## Installation
-Download and install RestService jar file https://github.com/stanislawbartkowski/RestService. It is the only dependency. Then prepare CARestAPI solution.
+
+Configure GitHub credentials if necessary.<br>
+
+>  vi  ~/.m2/settings.xml
+```XML
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <activeProfiles>
+    <activeProfile>github</activeProfile>
+  </activeProfiles>
+
+  <servers>
+    <server>
+      <id>github</id>
+      <password>ac70ae719940da1dd917f2a86351d50db3d41d4b</password>
+    </server>
+  </servers>
+</settings>
+
+```
+
 > cd CARest<br>
 > mvn clean install -Dmaven.test.skip=true<br>
 
