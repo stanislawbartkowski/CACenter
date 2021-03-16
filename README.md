@@ -354,14 +354,14 @@ Image created can be made public, for instance, in *quay.io*
 
 
 ### OpenShift/Kubernetes
-Having image available in public space, for instanca *quay.io* it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* files are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
+Having image available in public space, for instance *quay.io*, it is very easy to deploy *CACenter* to OpenShift/Kubernetes platform. Example *yaml* files are provided: https://github.com/stanislawbartkowski/CACenter/tree/master/openshift. 
 
 Important: Replica factor is set to 1. The CACenter is not calibrated to run in a parallel fashion.
 
 | yaml file | Deploy | Description |
 | ----- | ----- | ----- |
 | cacenter.yaml | oc create -f cacenter.yaml | Creates Deployment with ephemeral storage. Not recommended, the generated certificates will be wiped out together with the container.
-| cacenter-pv.yaml | oc create -f cacenter-pv.yaml | Creates Deployment with external storage, recommended. The PVN name is *cacenter-claim*. 
+| cacenter-pv.yaml | oc create -f cacenter-pv.yaml | Creates Deployment with external storage, recommended. The PVC name is *cacenter-claim*. 
 | claim-pv.yaml | oc create -f claim-pv | Creates PVC in default Storage Class. The storage capacity claimed is 10M.
 
 In OpenShift cluster, use *route* to create external access to *CACenter* service.
