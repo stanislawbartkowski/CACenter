@@ -1,0 +1,12 @@
+{
+  "proc": "SHELL",
+  "output": "TMPFILE",
+  "format": "ZIP",
+  "method": "POST",
+  "action": "./subcert.sh",
+  "pars": [
+    {
+      "name": "subject"
+    }
+  ]
+}

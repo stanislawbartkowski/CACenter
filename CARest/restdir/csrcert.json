@@ -1,0 +1,8 @@
+{
+  "proc": "SHELL",
+  "output": "TMPFILE",
+  "format": "ZIP",
+  "method": "POST",
+  "upload" : true,
+  "action": "./csrcert.sh"
+}
